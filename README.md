@@ -1,17 +1,17 @@
-# @berish/stateful
+# @berish/mvc-core
 
-A powerful manager with a new look on working with states. Allows for easy and affordable handling of state using vanilla JS. Knows how to read changes and update data optimally, updates only specific changed data. Works both in memory and with various state storage adapters.
+Model-View-Controller (MVC) implementation for ReactJS applications with plug-in support
 
 ## Installation
 
 ```
-$ npm install @berish/stateful --save
+$ npm install @berish/mvc-core --save
 ```
 
 or
 
 ```
-$ yarn add @berish/stateful
+$ yarn add @berish/mvc-core
 ```
 
 **Supports typescript**
