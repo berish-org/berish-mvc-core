@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createMvcRenderConfig } from './createMvcRenderConfig';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { mvcControllerContext } from './mvcControllerContext';
 import { MvcController } from './mvcController';
+import { upgradeProviderRenderEmit } from '../plugin/methods';
 
 export interface MvcRenderProps {
   mvcController: MvcController;
@@ -11,7 +11,13 @@ export interface MvcRenderProps {
 export function MvcRender(props: React.PropsWithChildren<MvcRenderProps>) {
   const { mvcController, preload } = props;
 
-  const { current: renderConfig } = useRef(createMvcRenderConfig());
+  const renderConfig = useMemo(() => {
+    const renderConfig = mvcController.mvcConfigRender;
+
+    mvcController.corePlugins.map((m) => m.provider).forEach((plugin) => upgradeProviderRenderEmit(plugin));
+
+    return renderConfig;
+  }, [mvcController.mvcConfigRender, mvcController.corePlugins]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +34,7 @@ export function MvcRender(props: React.PropsWithChildren<MvcRenderProps>) {
     if (isLoading && renderConfig.renderLoader) return renderConfig.renderLoader(props);
     if (renderConfig.renderApp) return renderConfig.renderApp(props);
     return props.children;
-  }, []);
+  }, [isLoading, renderConfig, props]);
 
   return <mvcControllerContext.Provider value={mvcController}>{render()}</mvcControllerContext.Provider>;
 }

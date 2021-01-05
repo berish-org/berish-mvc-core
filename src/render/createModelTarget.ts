@@ -1,7 +1,7 @@
 import { MvcController } from '../provider/mvcController';
 import { ModelClass } from '../component';
 import { upgradeInstanceEmit } from '../plugin/methods';
-import { onBeforeInitializeEmit } from '../events/methods';
+import { onConstructEmit } from '../events/methods';
 
 export function createModelTarget(mvcController: MvcController, modelClass: ModelClass) {
   if (!modelClass) return null;
@@ -11,7 +11,7 @@ export function createModelTarget(mvcController: MvcController, modelClass: Mode
   let model = mvcController.createModelInstance(modelClass);
   if (!model) return null;
 
-  onBeforeInitializeEmit(model);
+  onConstructEmit(model);
 
   model = mvcController.corePlugins
     .map((m) => m.model)

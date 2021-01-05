@@ -1,54 +1,87 @@
-import React, { PropsWithChildren, useContext, useMemo, useRef } from 'react';
-import { connect } from '@berish/stateful-react-connect';
+import { PropsWithChildren, useContext, useMemo } from 'react';
 
-import { ControllerClass } from '../component';
-import { onStartEmit, onStopEmit, onUpdatePropsEmit } from '../events/methods';
+import { ControllerClass, ControllerClassProps } from '../component';
+import { onInitializeEmit, onStartEmit, onStopEmit, onUpdatePropsEmit } from '../events/methods';
 import { useComponentLifecycle, useForceUpdate } from '../hooks';
 import { mvcControllerContext } from '../provider/mvcControllerContext';
 
-import { RenderView } from './renderView';
+import { getRenderView } from './renderView';
 import { createComponent } from './createComponent';
+import { SYMBOL_PROPS, SYMBOL_RENDER_CONFIG } from '../const';
+import { createComponentRenderConfig } from './createComponentRenderConfig';
+import { upgradeRenderConfigEmit } from '../plugin/methods';
 
-export interface RenderComponentProps {
-  controllerClass: ControllerClass;
+export interface RenderComponentProps<TController extends ControllerClass> {
+  controllerClass: TController;
 }
 
-export function RenderComponent(propsInternal: PropsWithChildren<RenderComponentProps>) {
+export function RenderComponent<TController extends ControllerClass>(
+  propsInternal: PropsWithChildren<RenderComponentProps<TController> & ControllerClassProps<TController>>,
+) {
   const { controllerClass, ...props } = propsInternal;
   const mvcController = useContext(mvcControllerContext);
 
-  const getPropsRef = useRef(() => props);
   const forceUpdate = useForceUpdate();
 
-  const { controller, view, model, ConnectedView } = useMemo(() => {
-    const { controller, view, model } = createComponent(
-      mvcController,
-      controllerClass,
-      getPropsRef.current,
-      forceUpdate,
-    );
-    const ConnectedView = connect([model], RenderView);
+  const { component, renderConfig, ConnectedView } = useMemo(() => {
+    const component = createComponent(mvcController, controllerClass, () => props, forceUpdate);
 
-    return { controller, view, model, ConnectedView };
-  }, [controllerClass, mvcController]);
+    const renderConfig = (component.controller[SYMBOL_RENDER_CONFIG] = mvcController.corePlugins.reduce(
+      (renderConfig, plugin) => upgradeRenderConfigEmit(plugin, renderConfig),
+      createComponentRenderConfig(),
+    ));
+
+    if (renderConfig.onBeforeInitialize) renderConfig.onBeforeInitialize(component);
+
+    const models = renderConfig.connectModel(component);
+
+    const ConnectedView = renderConfig.connectRenderView(component, models, getRenderView(component.view));
+
+    if (component.controller) onInitializeEmit(component.controller);
+    if (component.model) onInitializeEmit(component.model);
+    if (component.view) onInitializeEmit(component.view);
+
+    if (renderConfig.onAfterInitialize) renderConfig.onAfterInitialize(component);
+
+    return { component, renderConfig, ConnectedView };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controllerClass, mvcController, forceUpdate]);
 
   useComponentLifecycle(propsInternal, {
-    componentDidMount: () => {
-      Promise.all([onStartEmit(controller), onStartEmit(model), onStartEmit(view)]);
+    componentDidMount: async () => {
+      if (renderConfig.onBeforeStartEmit) await renderConfig.onBeforeStartEmit(component);
+
+      await Promise.all([onStartEmit(component.controller), onStartEmit(component.model), onStartEmit(component.view)]);
+
+      if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
     },
-    componentWillUnmount: () => {
-      Promise.all([onStopEmit(controller), onStopEmit(model), onStopEmit(view)]);
+
+    componentWillUnmount: async () => {
+      if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
+
+      await Promise.all([onStopEmit(component.controller), onStopEmit(component.model), onStopEmit(component.view)]);
+
+      if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
     },
-    componentDidUpdate: (prevPropsInternal) => {
+
+    componentDidUpdate: async (prevPropsInternal) => {
       const { controllerClass, ...prevProps } = prevPropsInternal;
-      getPropsRef.current = () => props;
-      Promise.all([
-        onUpdatePropsEmit(controller, prevProps),
-        onUpdatePropsEmit(model, prevProps),
-        onUpdatePropsEmit(view, prevProps),
+
+      if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, prevProps);
+
+      await Promise.all([
+        onUpdatePropsEmit(component.controller, prevProps),
+        onUpdatePropsEmit(component.model, prevProps),
+        onUpdatePropsEmit(component.view, prevProps),
       ]);
+
+      if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, prevProps);
     },
   });
 
-  return <ConnectedView view={view} />;
+  if (component.controller) {
+    component.controller[SYMBOL_PROPS] = () => props;
+  }
+
+  return renderConfig.renderComponent(component, ConnectedView, props);
 }

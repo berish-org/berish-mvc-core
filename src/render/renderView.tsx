@@ -1,13 +1,10 @@
 import React from 'react';
-
 import { View } from '../component';
 
-export interface RenderViewProps {
-  view: View;
+export function getRenderView(viewInstance: View) {
+  const RenderView: React.FunctionComponent<{ [key: string]: any }> = (props) => {
+    const result = viewInstance && viewInstance.render && viewInstance.render();
+    return <>{result || props.children}</>;
+  };
+  return RenderView;
 }
-
-export const RenderView: React.FunctionComponent<RenderViewProps> = (props) => {
-  const { view } = props;
-  const result = view && view.render && view.render();
-  return <>{result || props.children}</>;
-};

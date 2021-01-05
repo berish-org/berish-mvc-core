@@ -1,21 +1,25 @@
 import { PropsWithChildren } from 'react';
 
 import { SYMBOL_CONTROLLER, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_VIEW } from '../const';
-import { ControllerClass, getModel, getView } from '../component';
-import { onAfterInitializeEmit } from '../events/methods';
+import { Controller, ControllerClass, getModel, getView, Model, ModelInstance, View } from '../component';
 import { MvcController } from '../provider/mvcController';
 
 import { createController } from './createController';
 import { createModelTarget } from './createModelTarget';
 import { createModelStateful } from './createModelStateful';
 import { createView } from './createView';
+export interface MvcComponent {
+  controller: Controller;
+  model: ModelInstance<Model>;
+  view: View;
+}
 
 export function createComponent(
   mvcController: MvcController,
   controllerClass: ControllerClass,
   getProps: () => PropsWithChildren<{}>,
   forceUpdate: () => void,
-) {
+): MvcComponent {
   const controller = createController(mvcController, controllerClass);
 
   const modelClass = getModel(controllerClass);
@@ -39,10 +43,6 @@ export function createComponent(
       view.forceUpdate = forceUpdate;
     }
   }
-
-  if (controller) onAfterInitializeEmit(controller);
-  if (model) onAfterInitializeEmit(model);
-  if (view) onAfterInitializeEmit(view);
 
   return { controller, model, view };
 }

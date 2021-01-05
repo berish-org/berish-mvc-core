@@ -1,4 +1,2 @@
-import * as eventsMethods from './methods';
-
 export * from './lifecycleComponent';
-export { eventsMethods };
+export * as eventsMethods from './methods';

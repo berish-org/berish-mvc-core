@@ -1,4 +1,4 @@
-import { onBeforeInitializeEmit } from '../events/methods';
+import { onConstructEmit } from '../events/methods';
 import { upgradeInstanceEmit } from '../plugin/methods';
 import { MvcController } from '../provider/mvcController';
 import { View, ViewClass } from '../component';
@@ -11,7 +11,7 @@ export function createView(mvcController: MvcController, viewClass: ViewClass) {
   let view = mvcController.createViewInstance(viewClass);
   if (!view) return null;
 
-  onBeforeInitializeEmit(view);
+  onConstructEmit(view);
 
   view = mvcController.corePlugins
     .map((m) => m.view)

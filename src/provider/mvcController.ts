@@ -3,6 +3,7 @@ import guid from 'berish-guid';
 import { ControllerClass, ViewClass, ModelClass } from '../component';
 import { LifecyclePlugin, LifecyclePluginCore } from '../plugin';
 import { upgradeClassEmit, upgradeProviderEmit } from '../plugin/methods';
+import { createMvcRenderConfig, MvcRenderConfig } from './createMvcRenderConfig';
 
 export class MvcController {
   private _controllerToPluginControllerDict: [ControllerClass, ControllerClass][] = [];
@@ -10,12 +11,17 @@ export class MvcController {
   private _viewToPluginViewDict: [ViewClass, ViewClass][] = [];
 
   private _corePlugins: LifecyclePluginCore[] = [];
+  private _mvcRenderConfig: MvcRenderConfig = null;
   private _id: string = null;
 
   private constructor() {}
 
   public get id() {
     return this._id;
+  }
+
+  public get mvcConfigRender() {
+    return this._mvcRenderConfig;
   }
 
   public get corePlugins() {
@@ -238,11 +244,16 @@ export class MvcController {
   }
 
   public static create(plugins: LifecyclePlugin[]) {
+    const mvcRenderConfig = createMvcRenderConfig();
     const mvcController = new MvcController();
 
-    const corePlugins = plugins.map((m) => (typeof m === 'function' ? m(mvcController) : m)).filter(Boolean);
-    mvcController._corePlugins = corePlugins;
+    mvcController._mvcRenderConfig = mvcRenderConfig;
     mvcController._id = guid.guid();
+
+    const corePlugins = plugins
+      .map((m) => (typeof m === 'function' ? m({ mvcController, mvcRenderConfig }) : m))
+      .filter(Boolean);
+    mvcController._corePlugins = corePlugins;
 
     return mvcController;
   }

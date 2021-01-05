@@ -11,18 +11,18 @@ export const useComponentLifecycle = <TProps>(props: TProps, params: UseComponen
   const prevPropsRef = useRef(props);
 
   useEffect(() => {
-    if (params.componentDidMount) params.componentDidMount();
-    hasMounted.current = true;
-    return () => {
-      if (params.componentWillUnmount) params.componentWillUnmount();
-    };
-  }, []);
-
-  useEffect(() => {
     if (hasMounted.current && params.componentDidUpdate) {
       Promise.resolve(params.componentDidUpdate(prevPropsRef.current)).then(() => {
         prevPropsRef.current = props;
       });
     }
-  }, Object.values(props));
+  }, [props]);
+
+  useEffect(() => {
+    if (params.componentDidMount) Promise.resolve(params.componentDidMount()).then(() => (hasMounted.current = true));
+    else hasMounted.current = true;
+    return () => {
+      if (params.componentWillUnmount) params.componentWillUnmount();
+    };
+  }, []);
 };

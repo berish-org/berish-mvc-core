@@ -6,10 +6,10 @@ import { SYMBOL_CONTROLLER } from '../const';
 import { Controller } from './controller';
 
 export type ModelClassFabric<TController extends Controller<any> = Controller<any>> = new () => Model<TController>;
-export interface ModelClass<TController extends Controller<any> = Controller<any>>
-  extends ModelClassFabric<TController> {}
 
-export type ModelStatefulObject<TModel extends Model> = StatefulObject<TModel>;
+export interface ModelClass extends ModelClassFabric {}
+
+export type ModelInstance<TModel extends Model> = StatefulObject<TModel>;
 
 export interface Model<TController extends Controller<any> = Controller<any>>
   extends LifecycleComponent<TController['props']> {

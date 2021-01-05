@@ -6,3 +6,4 @@ export * from './plugin';
 export * from './provider';
 export * from './render';
 export * from './const';
+export * from './withController';

@@ -1,6 +1,6 @@
 export interface LifecycleInitializeSteps {
-  onBeforeInitialize?(): void;
-  onAfterInitialize?(): void;
+  onConstruct?(): void;
+  onInitialize?(): void;
 }
 
 export interface LifecycleExecutionStatusSteps {

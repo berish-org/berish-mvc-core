@@ -1,5 +1,8 @@
+import guid from 'berish-guid';
+
 import { ControllerClass } from '../component';
-import { onBeforeInitializeEmit } from '../events/methods';
+import { SYMBOL_ID } from '../const';
+import { onConstructEmit } from '../events/methods';
 import { upgradeInstanceEmit } from '../plugin/methods';
 import { MvcController } from '../provider/mvcController';
 
@@ -11,7 +14,9 @@ export function createController(mvcController: MvcController, controllerClass: 
   let controller = mvcController.createControllerInstance(controllerClass);
   if (!controller) return null;
 
-  onBeforeInitializeEmit(controller);
+  controller[SYMBOL_ID] = guid.guid();
+
+  onConstructEmit(controller);
 
   controller = mvcController.corePlugins
     .map((m) => m.controller)
