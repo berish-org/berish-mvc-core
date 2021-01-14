@@ -49,23 +49,25 @@ export function RenderComponent<TController extends ControllerClass>(
   }, [controllerClass, mvcController, forceUpdate]);
 
   useEffect(() => {
-    Promise.resolve(async () => {
+    new Promise<void>(async (resolve) => {
       if (renderConfig.onBeforeStartEmit) await renderConfig.onBeforeStartEmit(component);
       await Promise.all([onStartEmit(component.controller), onStartEmit(component.model), onStartEmit(component.view)]);
       if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
+      resolve();
     }).finally(() => (hasMounted.current = true));
 
     return () => {
-      Promise.resolve(async () => {
+      new Promise<void>(async (resolve) => {
         if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
         await Promise.all([onStopEmit(component.controller), onStopEmit(component.model), onStopEmit(component.view)]);
         if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
+        resolve();
       });
     };
   }, [component, renderConfig]);
 
   useEffect(() => {
-    Promise.resolve(async () => {
+    new Promise<void>(async (resolve) => {
       if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, props);
 
       await Promise.all([
@@ -75,6 +77,7 @@ export function RenderComponent<TController extends ControllerClass>(
       ]);
 
       if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
+      resolve();
     });
   }, [component, renderConfig, props]);
 
