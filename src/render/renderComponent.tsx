@@ -2,7 +2,7 @@ import { PropsWithChildren, useContext, useEffect, useMemo, useRef } from 'react
 
 import { ControllerClass, ControllerClassProps } from '../component';
 import { onInitializeEmit, onStartEmit, onStopEmit, onUpdatePropsEmit } from '../events/methods';
-import { useComponentLifecycle, useForceUpdate } from '../hooks';
+import { useForceUpdate } from '../hooks';
 import { mvcControllerContext } from '../provider/mvcControllerContext';
 
 import { getRenderView } from './renderView';
