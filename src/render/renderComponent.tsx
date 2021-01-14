@@ -49,25 +49,27 @@ export function RenderComponent<TController extends ControllerClass>(
   }, [controllerClass, mvcController, forceUpdate]);
 
   useEffect(() => {
-    new Promise<void>(async (resolve) => {
+    const onMount = async () => {
       if (renderConfig.onBeforeStartEmit) await renderConfig.onBeforeStartEmit(component);
       await Promise.all([onStartEmit(component.controller), onStartEmit(component.model), onStartEmit(component.view)]);
       if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
-      resolve();
-    }).finally(() => (hasMounted.current = true));
+    };
+
+    onMount().finally(() => (hasMounted.current = true));
 
     return () => {
-      new Promise<void>(async (resolve) => {
+      const unMount = async () => {
         if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
         await Promise.all([onStopEmit(component.controller), onStopEmit(component.model), onStopEmit(component.view)]);
         if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
-        resolve();
-      });
+      };
+
+      unMount();
     };
   }, [component, renderConfig]);
 
   useEffect(() => {
-    new Promise<void>(async (resolve) => {
+    const onUpdate = async () => {
       if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, props);
 
       await Promise.all([
@@ -77,8 +79,9 @@ export function RenderComponent<TController extends ControllerClass>(
       ]);
 
       if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
-      resolve();
-    });
+    };
+
+    onUpdate();
   }, [component, renderConfig, props]);
 
   if (component.controller) {
