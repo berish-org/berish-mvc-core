@@ -1,6 +1,6 @@
 {
   "name": "@berish/mvc-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Model-View-Controller (MVC) implementation for ReactJS applications with plug-in support",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
@@ -34,7 +34,7 @@
     "test": "jest --config jestconfig.json",
     "test:dev": "jest --config jestconfig.json --watch --verbose=false",
     "build": "tsc -p .",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.(t|j)s\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
