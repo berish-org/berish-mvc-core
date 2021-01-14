@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext, useMemo } from 'react';
+import { PropsWithChildren, useContext, useEffect, useMemo, useRef } from 'react';
 
 import { ControllerClass, ControllerClassProps } from '../component';
 import { onInitializeEmit, onStartEmit, onStopEmit, onUpdatePropsEmit } from '../events/methods';
@@ -21,6 +21,7 @@ export function RenderComponent<TController extends ControllerClass>(
   const { controllerClass, ...props } = propsInternal;
   const mvcController = useContext(mvcControllerContext);
 
+  const hasMounted = useRef(false);
   const forceUpdate = useForceUpdate();
 
   const { component, renderConfig, ConnectedView } = useMemo(() => {
@@ -47,37 +48,35 @@ export function RenderComponent<TController extends ControllerClass>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controllerClass, mvcController, forceUpdate]);
 
-  useComponentLifecycle(propsInternal, {
-    componentDidMount: async () => {
+  useEffect(() => {
+    Promise.resolve(async () => {
       if (renderConfig.onBeforeStartEmit) await renderConfig.onBeforeStartEmit(component);
-
       await Promise.all([onStartEmit(component.controller), onStartEmit(component.model), onStartEmit(component.view)]);
-
       if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
-    },
+    }).finally(() => (hasMounted.current = true));
 
-    componentWillUnmount: async () => {
-      if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
+    return () => {
+      Promise.resolve(async () => {
+        if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
+        await Promise.all([onStopEmit(component.controller), onStopEmit(component.model), onStopEmit(component.view)]);
+        if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
+      });
+    };
+  }, [component, renderConfig]);
 
-      await Promise.all([onStopEmit(component.controller), onStopEmit(component.model), onStopEmit(component.view)]);
-
-      if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
-    },
-
-    componentDidUpdate: async (prevPropsInternal) => {
-      const { controllerClass, ...prevProps } = prevPropsInternal;
-
-      if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, prevProps);
+  useEffect(() => {
+    Promise.resolve(async () => {
+      if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, props);
 
       await Promise.all([
-        onUpdatePropsEmit(component.controller, prevProps),
-        onUpdatePropsEmit(component.model, prevProps),
-        onUpdatePropsEmit(component.view, prevProps),
+        onUpdatePropsEmit(component.controller, props),
+        onUpdatePropsEmit(component.model, props),
+        onUpdatePropsEmit(component.view, props),
       ]);
 
-      if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, prevProps);
-    },
-  });
+      if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
+    });
+  }, [component, renderConfig, props]);
 
   if (component.controller) {
     component.controller[SYMBOL_PROPS] = () => props;
