@@ -1,6 +1,7 @@
 import guid from 'berish-guid';
 
 import { ControllerClass, ViewClass, ModelClass } from '../component';
+import { SYMBOL_ID } from '../const';
 import { LifecyclePlugin, LifecyclePluginCore } from '../plugin';
 import { upgradeClassEmit, upgradeProviderEmit } from '../plugin/methods';
 import { createMvcRenderConfig, MvcRenderConfig } from './createMvcRenderConfig';
@@ -75,14 +76,21 @@ export class MvcController {
       .map((m) => m.controller)
       .reduce((controller, plugin) => upgradeClassEmit(plugin, controller), originalController);
 
+    originalController.id = pluginController.id = guid.guid();
     this._controllerToPluginControllerDict.push([originalController, pluginController]);
   }
 
   public unregisterController(originalOrPluginController: ControllerClass): void {
-    if (this.isRegisteredController(originalOrPluginController))
+    if (this.isRegisteredController(originalOrPluginController)) {
+      const originalController = this.getOriginalController(originalOrPluginController);
+      const pluginController = this.getPluginController(originalOrPluginController);
+      if (originalController) originalController.id = undefined;
+      if (pluginController) pluginController.id = undefined;
+
       this._controllerToPluginControllerDict = this._controllerToPluginControllerDict.filter(
         (m) => m[0] !== originalOrPluginController && m[1] !== originalOrPluginController,
       );
+    }
   }
 
   public getPluginController(originalOrPluginController: ControllerClass) {
@@ -124,6 +132,8 @@ export class MvcController {
     if (!pluginController) return null;
 
     const instance = new pluginController() as InstanceType<TControllerClass>;
+    instance[SYMBOL_ID] = guid.guid();
+    instance.classId = pluginController.id;
     return instance;
   }
 

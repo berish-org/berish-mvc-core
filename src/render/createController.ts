@@ -14,8 +14,6 @@ export function createController(mvcController: MvcController, controllerClass: 
   let controller = mvcController.createControllerInstance(controllerClass);
   if (!controller) return null;
 
-  controller[SYMBOL_ID] = guid.guid();
-
   onConstructEmit(controller);
 
   controller = mvcController.corePlugins

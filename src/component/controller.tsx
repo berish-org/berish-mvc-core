@@ -11,6 +11,7 @@ export type ControllerClassFabric<TProps = {}> = new () => Controller<TProps>;
 export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TProps> {
   [SYMBOL_MODEL]?: ModelClass;
   [SYMBOL_VIEW]?: ViewClass;
+  id?: string;
   Render?(props: TProps): React.ReactElement;
 }
 
@@ -23,6 +24,7 @@ export interface Controller<TProps = {}, TModel extends Model<any> = Model<any>,
   [SYMBOL_VIEW]: TView;
   [SYMBOL_PROPS]: () => Readonly<PropsWithChildren<TProps>>;
   [SYMBOL_RENDER_CONFIG]: ComponentRenderConfig;
+  classId?: string;
 }
 
 // interface StaticThisFunction {
