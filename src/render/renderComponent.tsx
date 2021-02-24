@@ -10,6 +10,7 @@ import { createComponent } from './createComponent';
 import { SYMBOL_PROPS, SYMBOL_RENDER_CONFIG } from '../const';
 import { createComponentRenderConfig } from './createComponentRenderConfig';
 import { upgradeRenderConfigEmit } from '../plugin/methods';
+import React from 'react';
 
 export interface RenderComponentProps<TController extends ControllerClass> {
   controllerClass: TController;
@@ -88,5 +89,9 @@ export function RenderComponent<TController extends ControllerClass>(
     component.controller[SYMBOL_PROPS] = () => props;
   }
 
-  return renderConfig.renderComponent(component, ConnectedView, props);
+  return (
+    <React.Fragment key={component.controller.classId}>
+      {renderConfig.renderComponent(component, ConnectedView, props)}
+    </React.Fragment>
+  );
 }
