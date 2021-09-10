@@ -1,7 +1,7 @@
 import { SYMBOL_VIEW, SYMBOL_MODEL } from '../const';
 import { ControllerClass } from './controller';
 import { ViewClass } from './view';
-import { ModelClass } from './model';
+import { ModelFabric } from './model';
 
 export function setView<TView extends ViewClass>(viewClass: TView) {
   return function <TController extends ControllerClass>(controller: TController) {
@@ -14,13 +14,13 @@ export function getView(controller: ControllerClass): ViewClass {
   return controller && controller[SYMBOL_VIEW];
 }
 
-export function setModel<TModel extends ModelClass>(modelClass: TModel) {
+export function setModel<TModel extends ModelFabric>(modelClass: TModel) {
   return function <TController extends ControllerClass>(controller: TController) {
     controller[SYMBOL_MODEL] = modelClass;
     return controller;
   };
 }
 
-export function getModel(controller: ControllerClass): ModelClass {
+export function getModel(controller: ControllerClass): ModelFabric {
   return controller && controller[SYMBOL_MODEL];
 }

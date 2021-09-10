@@ -1,6 +1,6 @@
 import guid from 'berish-guid';
 
-import { ControllerClass, ViewClass, ModelClass } from '../component';
+import { ControllerClass, ViewClass, ModelFabric, Controller } from '../component';
 import { SYMBOL_ID } from '../const';
 import { LifecyclePlugin, LifecyclePluginCore } from '../plugin';
 import { upgradeClassEmit, upgradeProviderEmit } from '../plugin/methods';
@@ -8,7 +8,7 @@ import { createMvcRenderConfig, MvcRenderConfig } from './createMvcRenderConfig'
 
 export class MvcController {
   private _controllerToPluginControllerDict: [ControllerClass, ControllerClass][] = [];
-  private _modelToPluginModelDict: [ModelClass, ModelClass][] = [];
+  private _modelToPluginModelDict: [ModelFabric, ModelFabric][] = [];
   private _viewToPluginViewDict: [ViewClass, ViewClass][] = [];
 
   private _corePlugins: LifecyclePluginCore[] = [];
@@ -137,7 +137,7 @@ export class MvcController {
     return instance;
   }
 
-  public registerModel(originalModel: ModelClass): void {
+  public registerModel(originalModel: ModelFabric): void {
     if (this.isRegisteredModel(originalModel)) return void 0;
 
     const pluginModel = this.corePlugins
@@ -147,14 +147,14 @@ export class MvcController {
     this._modelToPluginModelDict.push([originalModel, pluginModel]);
   }
 
-  public unregisterModel(originalOrPluginModel: ModelClass): void {
+  public unregisterModel(originalOrPluginModel: ModelFabric): void {
     if (this.isRegisteredModel(originalOrPluginModel))
       this._modelToPluginModelDict = this._modelToPluginModelDict.filter(
         (m) => m[0] !== originalOrPluginModel && m[1] !== originalOrPluginModel,
       );
   }
 
-  public getPluginModel(originalOrPluginModel: ModelClass) {
+  public getPluginModel(originalOrPluginModel: ModelFabric) {
     if (this.isRegisteredPluginModel(originalOrPluginModel)) return originalOrPluginModel;
     if (this.isRegisteredOriginalModel(originalOrPluginModel)) {
       const tuple = this.models.filter((m) => m[0] === originalOrPluginModel)[0];
@@ -163,7 +163,7 @@ export class MvcController {
     return null;
   }
 
-  public getOriginalModel(originalOrPluginModel: ModelClass) {
+  public getOriginalModel(originalOrPluginModel: ModelFabric) {
     if (this.isRegisteredOriginalModel(originalOrPluginModel)) return originalOrPluginModel;
     if (this.isRegisteredPluginModel(originalOrPluginModel)) {
       const tuple = this.models.filter((m) => m[1] === originalOrPluginModel)[0];
@@ -172,27 +172,28 @@ export class MvcController {
     return null;
   }
 
-  public isRegisteredOriginalModel(originalModel: ModelClass) {
+  public isRegisteredOriginalModel(originalModel: ModelFabric) {
     return this.onlyOriginalModels.indexOf(originalModel) !== -1;
   }
 
-  public isRegisteredPluginModel(pluginModel: ModelClass) {
+  public isRegisteredPluginModel(pluginModel: ModelFabric) {
     return this.onlyPluginModels.indexOf(pluginModel) !== -1;
   }
 
-  public isRegisteredModel(originalOrPluginModel: ModelClass) {
+  public isRegisteredModel(originalOrPluginModel: ModelFabric) {
     if (this.isRegisteredOriginalModel(originalOrPluginModel)) return true;
     if (this.isRegisteredPluginModel(originalOrPluginModel)) return true;
     return false;
   }
 
-  public createModelInstance<TModelClass extends ModelClass>(
+  public createModelInstance<TModelClass extends ModelFabric>(
     originalOrPluginModel: TModelClass,
-  ): InstanceType<TModelClass> {
+    controller: Controller,
+  ): ReturnType<TModelClass> {
     const pluginModel = this.getPluginModel(originalOrPluginModel);
     if (!pluginModel) return null;
 
-    const instance = new pluginModel() as InstanceType<TModelClass>;
+    const instance = pluginModel(controller) as ReturnType<TModelClass>;
     return instance;
   }
 

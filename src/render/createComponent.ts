@@ -1,16 +1,15 @@
 import { PropsWithChildren } from 'react';
 
 import { SYMBOL_CONTROLLER, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_VIEW } from '../const';
-import { Controller, ControllerClass, getModel, getView, Model, View } from '../component';
+import { Controller, ControllerClass, getModel, getView, View } from '../component';
 import { MvcController } from '../provider/mvcController';
 
 import { createController } from './createController';
 import { createModelTarget } from './createModelTarget';
-import { createModelStateful } from './createModelStateful';
 import { createView } from './createView';
 export interface MvcComponent {
   controller: Controller;
-  model: Model;
+  model: object;
   view: View;
 }
 
@@ -23,8 +22,7 @@ export function createComponent(
   const controller = createController(mvcController, controllerClass);
 
   const modelClass = getModel(controllerClass);
-  const modelTarget = createModelTarget(mvcController, modelClass);
-  const model = createModelStateful(modelTarget);
+  const model = createModelTarget(mvcController, modelClass, controller);
 
   const viewClass = getView(controllerClass);
   const view = createView(mvcController, viewClass);

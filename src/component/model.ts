@@ -1,23 +1,7 @@
-import { LifecycleComponent } from '../events';
-import { SYMBOL_CONTROLLER } from '../const';
-
 import { Controller } from './controller';
 
-export type ModelClassFabric<TController extends Controller<any> = Controller<any>> = new () => Model<TController>;
+// export type ModelClassFabric<TController extends Controller<any> = Controller<any>> = (
+//   controller: TController,
+// ) => object;
 
-export interface ModelClass extends ModelClassFabric {}
-
-export interface Model<TController extends Controller<any> = Controller<any>>
-  extends LifecycleComponent<TController['props']> {
-  [SYMBOL_CONTROLLER]: TController;
-}
-
-export class Model<TController extends Controller<any> = Controller<any>> {
-  public get controller(): TController {
-    return this[SYMBOL_CONTROLLER];
-  }
-
-  public get props(): TController['props'] {
-    return this.controller.props;
-  }
-}
+export type ModelFabric<TController extends Controller<any> = Controller<any>> = (controller: TController) => object;

@@ -1,14 +1,14 @@
 import { MvcController } from '../provider/mvcController';
-import { ModelClass } from '../component';
+import { Controller, ModelFabric } from '../component';
 import { upgradeInstanceEmit } from '../plugin/methods';
 import { onConstructEmit } from '../events/methods';
 
-export function createModelTarget(mvcController: MvcController, modelClass: ModelClass) {
-  if (!modelClass) return null;
+export function createModelTarget(mvcController: MvcController, modelFabric: ModelFabric, controller: Controller) {
+  if (!modelFabric) return null;
 
-  mvcController.registerModel(modelClass);
+  mvcController.registerModel(modelFabric);
 
-  let model = mvcController.createModelInstance(modelClass);
+  let model = mvcController.createModelInstance(modelFabric, controller);
   if (!model) return null;
 
   onConstructEmit(model);

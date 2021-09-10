@@ -1,4 +1,4 @@
-import { Controller, ControllerClass, View, ViewClass, Model, ModelClass } from '../../component';
+import { Controller, ControllerClass, View, ViewClass, ModelFabric } from '../../component';
 import { LifecyclePluginComponentMethods } from '../lifecyclePlugin';
 
 export function upgradeClassEmit(
@@ -6,9 +6,9 @@ export function upgradeClassEmit(
   classType: ControllerClass,
 ): ControllerClass;
 export function upgradeClassEmit(
-  plugin: LifecyclePluginComponentMethods<ModelClass, Model>,
-  classType: ModelClass,
-): ModelClass;
+  plugin: LifecyclePluginComponentMethods<ModelFabric, object>,
+  classType: ModelFabric,
+): ModelFabric;
 export function upgradeClassEmit(
   plugin: LifecyclePluginComponentMethods<ViewClass, View>,
   classType: ViewClass,

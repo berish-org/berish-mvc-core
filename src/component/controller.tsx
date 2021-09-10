@@ -3,13 +3,13 @@ import { SYMBOL_ID, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_RENDER_CONFIG, SYMBOL_VIE
 import { LifecycleComponent } from '../events';
 import { ComponentRenderConfig } from '../render/createComponentRenderConfig';
 
-import { Model, ModelClass } from './model';
+import { ModelFabric } from './model';
 import { View, ViewClass } from './view';
 
 export type ControllerClassFabric<TProps = {}> = new () => Controller<TProps>;
 
 export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TProps> {
-  [SYMBOL_MODEL]?: ModelClass;
+  [SYMBOL_MODEL]?: ModelFabric;
   [SYMBOL_VIEW]?: ViewClass;
   id?: string;
   Render?(props: TProps): React.ReactElement;
@@ -17,7 +17,7 @@ export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TPro
 
 export type ControllerClassProps<TController extends ControllerClass> = InstanceType<TController>['props'];
 
-export interface Controller<TProps = {}, TModel extends Model<any> = Model<any>, TView extends View<any> = View<any>>
+export interface Controller<TProps = {}, TModel extends object = {}, TView extends View<any> = View<any>>
   extends LifecycleComponent<TProps> {
   [SYMBOL_ID]: string;
   [SYMBOL_MODEL]: TModel;
@@ -33,7 +33,7 @@ export interface Controller<TProps = {}, TModel extends Model<any> = Model<any>,
 //   >;
 // }
 
-export class Controller<TProps = {}, TModel extends Model<any> = Model<any>, TView extends View<any> = View<any>> {
+export class Controller<TProps = {}, TModel extends object = {}, TView extends View<any> = View<any>> {
   // static bro<T extends new () => Controller>(this: T): InstanceType<T> {
   //   return new this() as InstanceType<T>;
   // }

@@ -1,4 +1,4 @@
-import { Controller, ControllerClass, View, ViewClass, Model, ModelClass } from '../component';
+import { Controller, ControllerClass, View, ViewClass, ModelFabric } from '../component';
 import { MvcRenderConfig, MvcController } from '../provider';
 import { ComponentRenderConfig } from '../render/createComponentRenderConfig';
 
@@ -8,7 +8,7 @@ export interface LifecyclePluginComponentMethods<ClassType, InstanceType> {
 }
 
 export type LifecyclePluginControllerMethods = LifecyclePluginComponentMethods<ControllerClass, Controller>;
-export type LifecyclePluginModelMethods = LifecyclePluginComponentMethods<ModelClass, Model>;
+export type LifecyclePluginModelMethods = LifecyclePluginComponentMethods<ModelFabric, object>;
 export type LifecyclePluginViewMethods = LifecyclePluginComponentMethods<ViewClass, View>;
 
 export interface LifecyclePluginProviderMethods {
