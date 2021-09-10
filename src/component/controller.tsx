@@ -3,7 +3,7 @@ import { SYMBOL_ID, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_RENDER_CONFIG, SYMBOL_VIE
 import { LifecycleComponent } from '../events';
 import { ComponentRenderConfig } from '../render/createComponentRenderConfig';
 
-import { Model, ModelClass, ModelInstance } from './model';
+import { Model, ModelClass } from './model';
 import { View, ViewClass } from './view';
 
 export type ControllerClassFabric<TProps = {}> = new () => Controller<TProps>;
@@ -20,7 +20,7 @@ export type ControllerClassProps<TController extends ControllerClass> = Instance
 export interface Controller<TProps = {}, TModel extends Model<any> = Model<any>, TView extends View<any> = View<any>>
   extends LifecycleComponent<TProps> {
   [SYMBOL_ID]: string;
-  [SYMBOL_MODEL]: ModelInstance<TModel>;
+  [SYMBOL_MODEL]: TModel;
   [SYMBOL_VIEW]: TView;
   [SYMBOL_PROPS]: () => Readonly<PropsWithChildren<TProps>>;
   [SYMBOL_RENDER_CONFIG]: ComponentRenderConfig;
@@ -42,7 +42,7 @@ export class Controller<TProps = {}, TModel extends Model<any> = Model<any>, TVi
     return this[SYMBOL_ID];
   }
 
-  public get model(): ModelInstance<TModel> {
+  public get model(): TModel {
     return this[SYMBOL_MODEL];
   }
 

@@ -1,10 +1,9 @@
-import { createStateful } from '@berish/stateful';
+import { makeAutoObservable } from 'mobx';
 
 import { Model } from '../component';
 
 export function createModelStateful(modelTarget: Model) {
   if (!modelTarget) return null;
 
-  const modelStore = createStateful(modelTarget);
-  return modelStore;
+  return makeAutoObservable(modelTarget);
 }

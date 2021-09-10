@@ -1,9 +1,8 @@
 import React from 'react';
-import { StatefulObject } from '@berish/stateful';
-import { connect } from '@berish/stateful-react-connect';
+import { observer } from 'mobx-react-lite';
 import { Controller, ControllerClass, setView, View } from './component';
 
-export type WithControllerModelInstance = StatefulObject<object> | (() => StatefulObject<object>);
+export type WithControllerModelInstance = object | (() => object);
 
 export function withController<TProps>(
   Component: React.ComponentClass<TProps> | React.FunctionComponent<TProps>,
@@ -20,7 +19,7 @@ export function withController<TProps>(
       const prevConnectRenderView = this.renderConfig.connectRenderView;
 
       this.renderConfig.connectRenderView = (component, models, RenderView) => {
-        this.Component = connect(models, Component as React.FunctionComponent<TProps>);
+        this.Component = observer(Component as React.FunctionComponent<TProps>);
         return prevConnectRenderView(component, models, RenderView);
       };
     }

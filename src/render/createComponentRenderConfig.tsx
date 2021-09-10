@@ -1,14 +1,13 @@
 import React from 'react';
-import { StatefulObject } from '@berish/stateful';
-import { connect } from '@berish/stateful-react-connect';
+import { observer } from 'mobx-react-lite';
 import { MvcComponent } from './createComponent';
 
 export interface ComponentRenderConfig {
-  connectModel: (component: MvcComponent) => StatefulObject<object>[];
+  connectModel: (component: MvcComponent) => object[];
 
   connectRenderView: (
     component: MvcComponent,
-    models: StatefulObject<object>[],
+    models: object[],
     RenderView: React.FunctionComponent<any>,
   ) => React.FunctionComponent<any>;
 
@@ -31,7 +30,7 @@ export interface ComponentRenderConfig {
 export function createComponentRenderConfig(): ComponentRenderConfig {
   return {
     connectModel: ({ model }) => (model ? [model] : []),
-    connectRenderView: (component, models, renderView) => connect(models.filter(Boolean), renderView),
+    connectRenderView: (component, models, renderView) => observer(renderView),
     renderComponent: (component, ConnectedView, props) => <ConnectedView {...props} />,
   };
 }

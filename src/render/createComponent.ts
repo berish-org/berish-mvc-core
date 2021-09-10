@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 
 import { SYMBOL_CONTROLLER, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_VIEW } from '../const';
-import { Controller, ControllerClass, getModel, getView, Model, ModelInstance, View } from '../component';
+import { Controller, ControllerClass, getModel, getView, Model, View } from '../component';
 import { MvcController } from '../provider/mvcController';
 
 import { createController } from './createController';
@@ -10,7 +10,7 @@ import { createModelStateful } from './createModelStateful';
 import { createView } from './createView';
 export interface MvcComponent {
   controller: Controller;
-  model: ModelInstance<Model>;
+  model: Model;
   view: View;
 }
 
