@@ -16,7 +16,7 @@ export function getView(controller: ControllerClass): ViewClass {
 }
 
 export function setModel<BaseController extends Controller>(modelClass: ModelFabric<BaseController>) {
-  return function <TController extends BaseController>(controller: TController) {
+  return function <TController extends ControllerClass<BaseController['props']>>(controller: TController) {
     controller[SYMBOL_MODEL] = modelClass;
     return controller;
   };
