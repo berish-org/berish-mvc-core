@@ -17,11 +17,10 @@ export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TPro
 
 export type ControllerClassProps<TController extends ControllerClass> = InstanceType<TController>['props'];
 
-export interface Controller<TProps = {}, TModel extends object = {}, TView extends View<any> = View<any>>
-  extends LifecycleComponent<TProps> {
+export interface Controller<TProps = {}, TModel extends object = {}> extends LifecycleComponent<TProps> {
   [SYMBOL_ID]: string;
   [SYMBOL_MODEL]: TModel;
-  [SYMBOL_VIEW]: TView;
+  [SYMBOL_VIEW]: View;
   [SYMBOL_PROPS]: () => Readonly<PropsWithChildren<TProps>>;
   [SYMBOL_RENDER_CONFIG]: ComponentRenderConfig;
   classId?: string;
@@ -33,7 +32,7 @@ export interface Controller<TProps = {}, TModel extends object = {}, TView exten
 //   >;
 // }
 
-export class Controller<TProps = {}, TModel extends object = {}, TView extends View<any> = View<any>> {
+export class Controller<TProps = {}, TModel extends object = {}> {
   // static bro<T extends new () => Controller>(this: T): InstanceType<T> {
   //   return new this() as InstanceType<T>;
   // }
@@ -46,7 +45,7 @@ export class Controller<TProps = {}, TModel extends object = {}, TView extends V
     return this[SYMBOL_MODEL];
   }
 
-  public get view(): TView {
+  public get view(): View {
     return this[SYMBOL_VIEW];
   }
 

@@ -9,21 +9,10 @@ export function withController<TProps>(
 ): ControllerClass<TProps> {
   class HocViewClass extends View<HocControllerClass> {
     render() {
-      return <this.controller.Component {...this.props} />;
+      return <Component {...this.props} />;
     }
   }
-  class HocControllerClass extends Controller<TProps, null, null> {
-    Component = Component;
-
-    onInitialize() {
-      const prevConnectRenderView = this.renderConfig.connectRenderView;
-
-      this.renderConfig.connectRenderView = (component, models, RenderView) => {
-        this.Component = observer(Component as React.FunctionComponent<TProps>);
-        return prevConnectRenderView(component, models, RenderView);
-      };
-    }
-  }
+  class HocControllerClass extends Controller<TProps, {}> {}
 
   setView(HocViewClass)(HocControllerClass);
   return HocControllerClass;
