@@ -1,13 +1,8 @@
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { MvcComponent } from './createComponent';
 
 export interface ComponentRenderConfig {
-  connectModel: (component: MvcComponent) => object[];
-
-  connectRenderView: (component: MvcComponent, models: object[], RenderView: React.FunctionComponent<any>) => React.FunctionComponent<any>;
-
-  renderComponent: (component: MvcComponent, connectedView: React.FunctionComponent<any>, props: { [key: string]: any }) => JSX.Element;
+  renderComponent: (component: MvcComponent, props: { [key: string]: any }) => JSX.Element;
 
   onBeforeInitialize?: (component: MvcComponent) => void;
   onAfterInitialize?: (component: MvcComponent) => void;
@@ -21,8 +16,6 @@ export interface ComponentRenderConfig {
 
 export function createComponentRenderConfig(): ComponentRenderConfig {
   return {
-    connectModel: ({ model }) => (model ? [model] : []),
-    connectRenderView: (component, models, renderView) => observer(renderView),
-    renderComponent: (component, ConnectedView, props) => <ConnectedView {...props} />,
+    renderComponent: ({ view: Renderer }, props) => (Renderer ? <Renderer {...props} /> : <>{props.children}</>),
   };
 }

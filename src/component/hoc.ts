@@ -1,22 +1,23 @@
 import { SYMBOL_VIEW, SYMBOL_MODEL } from '../const';
 import { ControllerClass } from './controller';
-import { ViewClass } from './view';
+import { View } from './view';
 import { ModelFabric } from './model';
 import { Controller } from '.';
 
-export function setView<TView extends ViewClass>(viewClass: TView) {
+export function setView<TView extends View<any>>(view: TView) {
   return function <TController extends ControllerClass>(controller: TController) {
-    controller[SYMBOL_VIEW] = viewClass;
+    controller[SYMBOL_VIEW] = view;
     return controller;
   };
 }
 
-export function getView(controller: ControllerClass): ViewClass {
+export function getView(controller: ControllerClass): View {
   return controller && controller[SYMBOL_VIEW];
 }
 
 export function setModel<BaseController extends Controller>(modelClass: ModelFabric<BaseController>) {
   return function <TController extends ControllerClass<BaseController['props']>>(controller: TController) {
+    // TODO
     controller[SYMBOL_MODEL] = modelClass as any;
     return controller;
   };

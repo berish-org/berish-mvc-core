@@ -4,13 +4,13 @@ import { LifecycleComponent } from '../events';
 import { ComponentRenderConfig } from '../render/createComponentRenderConfig';
 
 import { ModelFabric } from './model';
-import { View, ViewClass } from './view';
+import { View } from './view';
 
 export type ControllerClassFabric<TProps = {}> = new () => Controller<TProps>;
 
 export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TProps> {
   [SYMBOL_MODEL]?: ModelFabric;
-  [SYMBOL_VIEW]?: ViewClass;
+  [SYMBOL_VIEW]?: View;
   id?: string;
   bro?(): this;
   Render?(props: TProps): React.ReactElement;
@@ -21,7 +21,6 @@ export type ControllerClassProps<TController extends ControllerClass> = Instance
 export interface Controller<TProps = {}, TModel extends object = {}> extends LifecycleComponent<TProps> {
   [SYMBOL_ID]: string;
   [SYMBOL_MODEL]: TModel;
-  [SYMBOL_VIEW]: View;
   [SYMBOL_PROPS]: () => Readonly<PropsWithChildren<TProps>>;
   [SYMBOL_RENDER_CONFIG]: ComponentRenderConfig;
   classId?: string;
@@ -50,10 +49,6 @@ export class Controller<TProps = {}, TModel extends object = {}> {
 
   public get model(): TModel {
     return this[SYMBOL_MODEL];
-  }
-
-  public get view(): View {
-    return this[SYMBOL_VIEW];
   }
 
   public get props(): Readonly<PropsWithChildren<TProps>> {

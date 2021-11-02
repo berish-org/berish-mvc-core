@@ -1,6 +1,6 @@
 import guid from 'berish-guid';
 
-import { ControllerClass, ViewClass, ModelFabric, Controller } from '../component';
+import { ControllerClass, View, ModelFabric, Controller } from '../component';
 import { SYMBOL_ID } from '../const';
 import { LifecyclePlugin, LifecyclePluginCore } from '../plugin';
 import { upgradeClassEmit, upgradeProviderEmit } from '../plugin/methods';
@@ -9,7 +9,7 @@ import { createMvcRenderConfig, MvcRenderConfig } from './createMvcRenderConfig'
 export class MvcController {
   private _controllerToPluginControllerDict: [ControllerClass, ControllerClass][] = [];
   private _modelToPluginModelDict: [ModelFabric, ModelFabric][] = [];
-  private _viewToPluginViewDict: [ViewClass, ViewClass][] = [];
+  private _viewToPluginViewDict: [View, View][] = [];
 
   private _corePlugins: LifecyclePluginCore[] = [];
   private _mvcRenderConfig: MvcRenderConfig = null;
@@ -186,20 +186,20 @@ export class MvcController {
     return instance;
   }
 
-  public registerView(originalView: ViewClass): void {
+  public registerView(originalView: View): void {
     if (this.isRegisteredView(originalView)) return void 0;
 
-    const pluginView = this.corePlugins.map((m) => m.view).reduce((view, plugin) => upgradeClassEmit(plugin, view) as ViewClass, originalView);
+    const pluginView = this.corePlugins.map((m) => m.view).reduce((view, plugin) => upgradeClassEmit(plugin, view) as View, originalView);
 
     this._viewToPluginViewDict.push([originalView, pluginView]);
   }
 
-  public unregisterView(originalOrPluginView: ViewClass): void {
+  public unregisterView(originalOrPluginView: View): void {
     if (this.isRegisteredView(originalOrPluginView))
       this._viewToPluginViewDict = this._viewToPluginViewDict.filter((m) => m[0] !== originalOrPluginView && m[1] !== originalOrPluginView);
   }
 
-  public getPluginView(originalOrPluginView: ViewClass) {
+  public getPluginView(originalOrPluginView: View) {
     if (this.isRegisteredPluginView(originalOrPluginView)) return originalOrPluginView;
     if (this.isRegisteredOriginalView(originalOrPluginView)) {
       const tuple = this.views.filter((m) => m[0] === originalOrPluginView)[0];
@@ -208,7 +208,7 @@ export class MvcController {
     return null;
   }
 
-  public getOriginalView(originalOrPluginView: ViewClass) {
+  public getOriginalView(originalOrPluginView: View) {
     if (this.isRegisteredOriginalView(originalOrPluginView)) return originalOrPluginView;
     if (this.isRegisteredPluginView(originalOrPluginView)) {
       const tuple = this.views.filter((m) => m[1] === originalOrPluginView)[0];
@@ -217,27 +217,28 @@ export class MvcController {
     return null;
   }
 
-  public isRegisteredOriginalView(originalController: ViewClass) {
+  public isRegisteredOriginalView(originalController: View) {
     return this.onlyOriginalViews.indexOf(originalController) !== -1;
   }
 
-  public isRegisteredPluginView(pluginController: ViewClass) {
+  public isRegisteredPluginView(pluginController: View) {
     return this.onlyPluginViews.indexOf(pluginController) !== -1;
   }
 
-  public isRegisteredView(originalOrPluginController: ViewClass) {
+  public isRegisteredView(originalOrPluginController: View) {
     if (this.isRegisteredOriginalView(originalOrPluginController)) return true;
     if (this.isRegisteredPluginView(originalOrPluginController)) return true;
     return false;
   }
 
-  public createViewInstance<TViewClass extends ViewClass>(originalOrPluginView: TViewClass): InstanceType<TViewClass> {
-    const pluginView = this.getPluginView(originalOrPluginView);
-    if (!pluginView) return null;
+  // TODO
+  // public createViewInstance<TViewClass extends View>(originalOrPluginView: TViewClass): InstanceType<TViewClass> {
+  //   const pluginView = this.getPluginView(originalOrPluginView);
+  //   if (!pluginView) return null;
 
-    const instance = new pluginView() as InstanceType<TViewClass>;
-    return instance;
-  }
+  //   const instance = new pluginView() as InstanceType<TViewClass>;
+  //   return instance;
+  // }
 
   public static create(plugins: LifecyclePlugin[]) {
     const mvcRenderConfig = createMvcRenderConfig();
