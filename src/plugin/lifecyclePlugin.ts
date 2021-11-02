@@ -31,6 +31,4 @@ export interface LifecyclePluginGlobal {
   mvcRenderConfig: MvcRenderConfig;
 }
 
-export type LifecyclePlugin =
-  | ((lifeCyclePluginGlobal: LifecyclePluginGlobal) => LifecyclePluginCore)
-  | LifecyclePluginCore;
+export type LifecyclePlugin = ((lifeCyclePluginGlobal: LifecyclePluginGlobal) => LifecyclePluginCore) | LifecyclePluginCore;

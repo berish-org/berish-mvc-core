@@ -13,9 +13,7 @@ export function createModelTarget(mvcController: MvcController, modelFabric: Mod
 
   onConstructEmit(model);
 
-  model = mvcController.corePlugins
-    .map((m) => m.model)
-    .reduce((model, plugin) => upgradeInstanceEmit(plugin, model), model);
+  model = mvcController.corePlugins.map((m) => m.model).reduce((model, plugin) => upgradeInstanceEmit(plugin, model), model);
 
   return model;
 }

@@ -1,12 +1,9 @@
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { Controller, ControllerClass, setView, View } from './component';
 
 export type WithControllerModelInstance = object | (() => object);
 
-export function withController<TProps>(
-  Component: React.ComponentClass<TProps> | React.FunctionComponent<TProps>,
-): ControllerClass<TProps> {
+export function withController<TProps>(Component: React.ComponentClass<TProps> | React.FunctionComponent<TProps>): ControllerClass<TProps> {
   class HocViewClass extends View<HocControllerClass> {
     render() {
       return <Component {...this.props} />;

@@ -13,9 +13,7 @@ export function createView(mvcController: MvcController, viewClass: ViewClass) {
 
   onConstructEmit(view);
 
-  view = mvcController.corePlugins
-    .map((m) => m.view)
-    .reduce((view, plugin) => upgradeInstanceEmit(plugin, view) as View, view);
+  view = mvcController.corePlugins.map((m) => m.view).reduce((view, plugin) => upgradeInstanceEmit(plugin, view) as View, view);
 
   return view;
 }

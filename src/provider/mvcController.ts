@@ -72,9 +72,7 @@ export class MvcController {
   public registerController(originalController: ControllerClass): void {
     if (this.isRegisteredController(originalController)) return void 0;
 
-    const pluginController = this.corePlugins
-      .map((m) => m.controller)
-      .reduce((controller, plugin) => upgradeClassEmit(plugin, controller), originalController);
+    const pluginController = this.corePlugins.map((m) => m.controller).reduce((controller, plugin) => upgradeClassEmit(plugin, controller), originalController);
 
     originalController.id = pluginController.id = guid.guid();
     this._controllerToPluginControllerDict.push([originalController, pluginController]);
@@ -125,9 +123,7 @@ export class MvcController {
     return false;
   }
 
-  public createControllerInstance<TControllerClass extends ControllerClass>(
-    originalOrPluginController: TControllerClass,
-  ): InstanceType<TControllerClass> {
+  public createControllerInstance<TControllerClass extends ControllerClass>(originalOrPluginController: TControllerClass): InstanceType<TControllerClass> {
     const pluginController = this.getPluginController(originalOrPluginController);
     if (!pluginController) return null;
 
@@ -140,18 +136,14 @@ export class MvcController {
   public registerModel(originalModel: ModelFabric): void {
     if (this.isRegisteredModel(originalModel)) return void 0;
 
-    const pluginModel = this.corePlugins
-      .map((m) => m.model)
-      .reduce((model, plugin) => upgradeClassEmit(plugin, model), originalModel);
+    const pluginModel = this.corePlugins.map((m) => m.model).reduce((model, plugin) => upgradeClassEmit(plugin, model), originalModel);
 
     this._modelToPluginModelDict.push([originalModel, pluginModel]);
   }
 
   public unregisterModel(originalOrPluginModel: ModelFabric): void {
     if (this.isRegisteredModel(originalOrPluginModel))
-      this._modelToPluginModelDict = this._modelToPluginModelDict.filter(
-        (m) => m[0] !== originalOrPluginModel && m[1] !== originalOrPluginModel,
-      );
+      this._modelToPluginModelDict = this._modelToPluginModelDict.filter((m) => m[0] !== originalOrPluginModel && m[1] !== originalOrPluginModel);
   }
 
   public getPluginModel(originalOrPluginModel: ModelFabric) {
@@ -186,10 +178,7 @@ export class MvcController {
     return false;
   }
 
-  public createModelInstance<TModelClass extends ModelFabric>(
-    originalOrPluginModel: TModelClass,
-    controller: Controller,
-  ): ReturnType<TModelClass> {
+  public createModelInstance<TModelClass extends ModelFabric>(originalOrPluginModel: TModelClass, controller: Controller): ReturnType<TModelClass> {
     const pluginModel = this.getPluginModel(originalOrPluginModel);
     if (!pluginModel) return null;
 
@@ -200,18 +189,14 @@ export class MvcController {
   public registerView(originalView: ViewClass): void {
     if (this.isRegisteredView(originalView)) return void 0;
 
-    const pluginView = this.corePlugins
-      .map((m) => m.view)
-      .reduce((view, plugin) => upgradeClassEmit(plugin, view) as ViewClass, originalView);
+    const pluginView = this.corePlugins.map((m) => m.view).reduce((view, plugin) => upgradeClassEmit(plugin, view) as ViewClass, originalView);
 
     this._viewToPluginViewDict.push([originalView, pluginView]);
   }
 
   public unregisterView(originalOrPluginView: ViewClass): void {
     if (this.isRegisteredView(originalOrPluginView))
-      this._viewToPluginViewDict = this._viewToPluginViewDict.filter(
-        (m) => m[0] !== originalOrPluginView && m[1] !== originalOrPluginView,
-      );
+      this._viewToPluginViewDict = this._viewToPluginViewDict.filter((m) => m[0] !== originalOrPluginView && m[1] !== originalOrPluginView);
   }
 
   public getPluginView(originalOrPluginView: ViewClass) {
@@ -261,9 +246,7 @@ export class MvcController {
     mvcController._mvcRenderConfig = mvcRenderConfig;
     mvcController._id = guid.guid();
 
-    const corePlugins = plugins
-      .map((m) => (typeof m === 'function' ? m({ mvcController, mvcRenderConfig }) : m))
-      .filter(Boolean);
+    const corePlugins = plugins.map((m) => (typeof m === 'function' ? m({ mvcController, mvcRenderConfig }) : m)).filter(Boolean);
     mvcController._corePlugins = corePlugins;
 
     return mvcController;

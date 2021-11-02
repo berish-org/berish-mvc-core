@@ -5,11 +5,9 @@ import { Controller } from './controller';
 
 export type ViewClassFabric<TController extends Controller<any> = Controller<any>> = new () => View<TController>;
 
-export interface ViewClass<TController extends Controller<any> = Controller<any>>
-  extends ViewClassFabric<TController> {}
+export interface ViewClass<TController extends Controller<any> = Controller<any>> extends ViewClassFabric<TController> {}
 
-export interface View<TController extends Controller<any> = Controller<any>>
-  extends LifecycleComponent<TController['props']> {
+export interface View<TController extends Controller<any> = Controller<any>> extends LifecycleComponent<TController['props']> {
   render(): React.ReactNode;
   forceUpdate(): void;
   [SYMBOL_CONTROLLER]: TController;

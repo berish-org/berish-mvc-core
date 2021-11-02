@@ -1,7 +1,4 @@
-import guid from 'berish-guid';
-
 import { ControllerClass } from '../component';
-import { SYMBOL_ID } from '../const';
 import { onConstructEmit } from '../events/methods';
 import { upgradeInstanceEmit } from '../plugin/methods';
 import { MvcController } from '../provider/mvcController';
@@ -16,9 +13,7 @@ export function createController(mvcController: MvcController, controllerClass: 
 
   onConstructEmit(controller);
 
-  controller = mvcController.corePlugins
-    .map((m) => m.controller)
-    .reduce((controller, plugin) => upgradeInstanceEmit(plugin, controller), controller);
+  controller = mvcController.corePlugins.map((m) => m.controller).reduce((controller, plugin) => upgradeInstanceEmit(plugin, controller), controller);
 
   return controller;
 }

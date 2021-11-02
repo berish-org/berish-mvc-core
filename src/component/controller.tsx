@@ -12,6 +12,7 @@ export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TPro
   [SYMBOL_MODEL]?: ModelFabric;
   [SYMBOL_VIEW]?: ViewClass;
   id?: string;
+  bro?(): this;
   Render?(props: TProps): React.ReactElement;
 }
 
@@ -32,10 +33,16 @@ export interface Controller<TProps = {}, TModel extends object = {}> extends Lif
 //   >;
 // }
 
+export const ControllerContext = React.createContext(null);
+
 export class Controller<TProps = {}, TModel extends object = {}> {
-  // static bro<T extends new () => Controller>(this: T): InstanceType<T> {
-  //   return new this() as InstanceType<T>;
-  // }
+  static create() {
+    return this;
+  }
+
+  static useController(): InstanceType<typeof this> {
+    return React.useContext<InstanceType<typeof this>>(ControllerContext);
+  }
 
   public get id(): Readonly<string> {
     return this[SYMBOL_ID];
@@ -57,3 +64,7 @@ export class Controller<TProps = {}, TModel extends object = {}> {
     return this[SYMBOL_RENDER_CONFIG];
   }
 }
+
+export class Test extends Controller<{ test: boolean }> {}
+
+Test.create();

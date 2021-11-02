@@ -45,7 +45,6 @@ export function RenderComponent<TController extends ControllerClass>(
     if (renderConfig.onAfterInitialize) renderConfig.onAfterInitialize(component);
 
     return { component, renderConfig, ConnectedView };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controllerClass, mvcController, forceUpdate]);
 
   useEffect(() => {
@@ -72,11 +71,7 @@ export function RenderComponent<TController extends ControllerClass>(
     const onUpdate = async () => {
       if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, props);
 
-      await Promise.all([
-        onUpdatePropsEmit(component.controller, props),
-        onUpdatePropsEmit(component.model, props),
-        onUpdatePropsEmit(component.view, props),
-      ]);
+      await Promise.all([onUpdatePropsEmit(component.controller, props), onUpdatePropsEmit(component.model, props), onUpdatePropsEmit(component.view, props)]);
 
       if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
     };

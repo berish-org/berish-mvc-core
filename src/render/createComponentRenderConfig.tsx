@@ -5,17 +5,9 @@ import { MvcComponent } from './createComponent';
 export interface ComponentRenderConfig {
   connectModel: (component: MvcComponent) => object[];
 
-  connectRenderView: (
-    component: MvcComponent,
-    models: object[],
-    RenderView: React.FunctionComponent<any>,
-  ) => React.FunctionComponent<any>;
+  connectRenderView: (component: MvcComponent, models: object[], RenderView: React.FunctionComponent<any>) => React.FunctionComponent<any>;
 
-  renderComponent: (
-    component: MvcComponent,
-    connectedView: React.FunctionComponent<any>,
-    props: { [key: string]: any },
-  ) => JSX.Element;
+  renderComponent: (component: MvcComponent, connectedView: React.FunctionComponent<any>, props: { [key: string]: any }) => JSX.Element;
 
   onBeforeInitialize?: (component: MvcComponent) => void;
   onAfterInitialize?: (component: MvcComponent) => void;
