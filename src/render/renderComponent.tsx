@@ -32,7 +32,6 @@ export function RenderComponent<TController extends ControllerClass>(
     if (renderConfig.onBeforeInitialize) renderConfig.onBeforeInitialize(component);
 
     if (component.controller) onInitializeEmit(component.controller);
-    if (component.model) onInitializeEmit(component.model);
 
     if (renderConfig.onAfterInitialize) renderConfig.onAfterInitialize(component);
 
@@ -42,7 +41,7 @@ export function RenderComponent<TController extends ControllerClass>(
   useEffect(() => {
     const onMount = async () => {
       if (renderConfig.onBeforeStartEmit) await renderConfig.onBeforeStartEmit(component);
-      await Promise.all([onStartEmit(component.controller), onStartEmit(component.model)]);
+      await onStartEmit(component.controller);
       if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
     };
 
@@ -51,7 +50,7 @@ export function RenderComponent<TController extends ControllerClass>(
     return () => {
       const unMount = async () => {
         if (renderConfig.onBeforeStopEmit) await renderConfig.onBeforeStopEmit(component);
-        await Promise.all([onStopEmit(component.controller), onStopEmit(component.model)]);
+        await onStopEmit(component.controller);
         if (renderConfig.onAfterStopEmit) await renderConfig.onAfterStopEmit(component);
       };
 
@@ -63,7 +62,7 @@ export function RenderComponent<TController extends ControllerClass>(
     const onUpdate = async () => {
       if (renderConfig.onBeforeUpdatePropsEmit) await renderConfig.onBeforeUpdatePropsEmit(component, props);
 
-      await Promise.all([onUpdatePropsEmit(component.controller, props), onUpdatePropsEmit(component.model, props)]);
+      await onUpdatePropsEmit(component.controller, props);
 
       if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
     };

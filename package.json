@@ -1,7 +1,7 @@
 {
   "name": "@berish/mvc-core",
   "version": "1.2.6",
-  "description": "Model-View-Controller (MVC) implementation for ReactJS applications with plug-in support",
+  "description": "View-Controller (VC) implementation for ReactJS applications with plug-in support",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "repository": "git@gitlab.com:berish/packages/berish-mvc-core.git",

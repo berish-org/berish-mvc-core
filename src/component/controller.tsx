@@ -1,26 +1,22 @@
 import React, { PropsWithChildren } from 'react';
-import { SYMBOL_ID, SYMBOL_MODEL, SYMBOL_PROPS, SYMBOL_RENDER_CONFIG, SYMBOL_VIEW } from '../const';
+import { SYMBOL_ID, SYMBOL_PROPS, SYMBOL_RENDER_CONFIG, SYMBOL_VIEW } from '../const';
 import { LifecycleComponent } from '../events';
 import { ComponentRenderConfig } from '../render/createComponentRenderConfig';
 
-import { ModelFabric } from './model';
 import { View } from './view';
 
 export type ControllerClassFabric<TProps = {}> = new () => Controller<TProps>;
 
 export interface ControllerClass<TProps = {}> extends ControllerClassFabric<TProps> {
-  [SYMBOL_MODEL]?: ModelFabric;
   [SYMBOL_VIEW]?: View;
   id?: string;
-  bro?(): this;
   Render?(props: TProps): React.ReactElement;
 }
 
 export type ControllerClassProps<TController extends ControllerClass> = InstanceType<TController>['props'];
 
-export interface Controller<TProps = {}, TModel extends object = {}> extends LifecycleComponent<TProps> {
+export interface Controller<TProps = {}> extends LifecycleComponent<TProps> {
   [SYMBOL_ID]: string;
-  [SYMBOL_MODEL]: TModel;
   [SYMBOL_PROPS]: () => Readonly<PropsWithChildren<TProps>>;
   [SYMBOL_RENDER_CONFIG]: ComponentRenderConfig;
   classId?: string;
@@ -34,7 +30,7 @@ export interface Controller<TProps = {}, TModel extends object = {}> extends Lif
 
 export const ControllerContext = React.createContext(null);
 
-export class Controller<TProps = {}, TModel extends object = {}> {
+export class Controller<TProps = {}> {
   static create<T extends ControllerClass>(this: T): InstanceType<T> {
     return new this() as any;
   }
@@ -45,10 +41,6 @@ export class Controller<TProps = {}, TModel extends object = {}> {
 
   public get id(): Readonly<string> {
     return this[SYMBOL_ID];
-  }
-
-  public get model(): TModel {
-    return this[SYMBOL_MODEL];
   }
 
   public get props(): Readonly<PropsWithChildren<TProps>> {
