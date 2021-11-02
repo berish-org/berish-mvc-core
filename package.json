@@ -33,7 +33,8 @@
   "scripts": {
     "test": "jest --config jestconfig.json",
     "test:dev": "jest --config jestconfig.json --watch --verbose=false",
-    "build": "tsc -p .",
+    "build": "rm -rf ./build/ && tsc -p tsconfig.json",
+    "watch": "rm -rf ./build/ && tsc -p tsconfig.json -w",
     "utils:lint": "eslint .",
     "utils:prettier": "prettier --write .",
     "prepare": "npm run build",

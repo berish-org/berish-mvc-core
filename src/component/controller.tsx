@@ -36,12 +36,12 @@ export interface Controller<TProps = {}, TModel extends object = {}> extends Lif
 export const ControllerContext = React.createContext(null);
 
 export class Controller<TProps = {}, TModel extends object = {}> {
-  static create() {
-    return this;
+  static create<T extends ControllerClass>(this: T): InstanceType<T> {
+    return new this() as any;
   }
 
-  static useController(): InstanceType<typeof this> {
-    return React.useContext<InstanceType<typeof this>>(ControllerContext);
+  static useController<T extends ControllerClass>(this: T): InstanceType<T> {
+    return React.useContext<InstanceType<T>>(ControllerContext);
   }
 
   public get id(): Readonly<string> {
@@ -67,4 +67,4 @@ export class Controller<TProps = {}, TModel extends object = {}> {
 
 export class Test extends Controller<{ test: boolean }> {}
 
-Test.create();
+Test.useController().props;
