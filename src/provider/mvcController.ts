@@ -1,6 +1,6 @@
 import guid from 'berish-guid';
 
-import { ControllerClass, View, Controller } from '../component';
+import { ControllerClass, View } from '../component';
 import { SYMBOL_ID } from '../const';
 import { LifecyclePlugin, LifecyclePluginCore } from '../plugin';
 import { upgradeClassEmit, upgradeProviderEmit } from '../plugin/methods';
