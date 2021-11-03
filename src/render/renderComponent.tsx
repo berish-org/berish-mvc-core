@@ -9,6 +9,7 @@ import { upgradeInstanceEmit, upgradeRenderConfigEmit } from '../plugin/methods'
 import { createComponent } from './createComponent';
 import { createComponentRenderConfig } from './createComponentRenderConfig';
 import { ControllerProvider } from '../component/useController';
+import React from 'react';
 
 export interface RenderComponentProps<TController extends ControllerClass> {
   controllerClass: TController;
@@ -78,5 +79,5 @@ export function RenderComponent<TController extends ControllerClass>(
   const renderedContent = renderConfig.renderComponent(component, props);
   const upgradedContent = mvcController.corePlugins.map((m) => m.view).reduce((view, plugin) => upgradeInstanceEmit(plugin, view), renderedContent);
 
-  return upgradedContent;
+  return <ControllerProvider value={component.controller}>{upgradedContent}</ControllerProvider>;
 }
