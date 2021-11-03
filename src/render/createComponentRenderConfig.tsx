@@ -1,4 +1,5 @@
 import React from 'react';
+import { ControllerProvider } from '..';
 import { MvcComponent } from './createComponent';
 
 export interface ComponentRenderConfig {
@@ -16,6 +17,8 @@ export interface ComponentRenderConfig {
 
 export function createComponentRenderConfig(): ComponentRenderConfig {
   return {
-    renderComponent: ({ view: Renderer }, props) => (Renderer ? <Renderer {...props} /> : <>{props.children}</>),
+    renderComponent: ({ view: Renderer, controller }, props) => (
+      <ControllerProvider value={controller}>{Renderer ? <Renderer {...props} /> : <>{props.children}</>}</ControllerProvider>
+    ),
   };
 }

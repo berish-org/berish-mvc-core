@@ -1,6 +1,6 @@
 import { PropsWithChildren, useContext, useEffect, useMemo, useRef } from 'react';
 
-import { ControllerClass, ControllerClassProps } from '../component';
+import { ControllerClass, PropsFromControllerClass } from '../component';
 import { onInitializeEmit, onStartEmit, onStopEmit, onUpdatePropsEmit } from '../events/methods';
 import { mvcControllerContext } from '../provider/mvcControllerContext';
 import { SYMBOL_PROPS, SYMBOL_RENDER_CONFIG } from '../const';
@@ -8,13 +8,14 @@ import { upgradeInstanceEmit, upgradeRenderConfigEmit } from '../plugin/methods'
 
 import { createComponent } from './createComponent';
 import { createComponentRenderConfig } from './createComponentRenderConfig';
+import { ControllerProvider } from '../component/useController';
 
 export interface RenderComponentProps<TController extends ControllerClass> {
   controllerClass: TController;
 }
 
 export function RenderComponent<TController extends ControllerClass>(
-  propsInternal: PropsWithChildren<RenderComponentProps<TController> & ControllerClassProps<TController>>,
+  propsInternal: PropsWithChildren<RenderComponentProps<TController> & PropsFromControllerClass<TController>>,
 ) {
   const { controllerClass, ...props } = propsInternal;
   const mvcController = useContext(mvcControllerContext);
