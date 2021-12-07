@@ -47,7 +47,9 @@ export function RenderComponent<TController extends ControllerClass>(
       if (renderConfig.onAfterStartEmit) await renderConfig.onAfterStartEmit(component);
     };
 
-    onMount().finally(() => (hasMounted.current = true));
+    onMount()
+      .catch<void>(() => null)
+      .then(() => (hasMounted.current = true));
 
     return () => {
       const unMount = async () => {
@@ -69,7 +71,7 @@ export function RenderComponent<TController extends ControllerClass>(
       if (renderConfig.onAfterUpdatePropsEmit) await renderConfig.onAfterUpdatePropsEmit(component, props);
     };
 
-    onUpdate();
+    onUpdate().catch<void>(() => null);
   }, [component, renderConfig, props]);
 
   if (component.controller) {
