@@ -1,6 +1,6 @@
 {
   "name": "@berish/mvc-core",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "View-Controller (VC) implementation for ReactJS applications with plug-in support",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
